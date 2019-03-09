@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.InteropServices;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class OpenNewTab : MonoBehaviour
@@ -7,15 +8,17 @@ public class OpenNewTab : MonoBehaviour
     [SerializeField] private Button openUrlButton;
     
 #if UNITY_WEBGL
-    //Javascriptの呼び出し
     [DllImport("__Internal")]
-    private static extern void OpenNewTabEventOn(string url);
+    private static extern void Hello();    
     [DllImport("__Internal")]
-    private static extern void OpenNewTabEventOff();
+    private static extern void OpenNewTabFn(string url);
 #endif
     
     private void Start()
     {
+#if UNITY_WEBGL
+        Hello();
+#endif
         var clickedEvent = new Button.ButtonClickedEvent();
         clickedEvent.AddListener(() => OpenUrl(urlInput.text));
         
@@ -25,7 +28,7 @@ public class OpenNewTab : MonoBehaviour
     private void OpenUrl(string url)
     {
 #if UNITY_WEBGL
-        OpenNewTabEventOn(url);
+        OpenNewTabFn(url);
 #else
         Application.OpenURL(url);
 #endif  
